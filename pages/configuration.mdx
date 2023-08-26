@@ -11,7 +11,7 @@ Sage is primarily configured via a single [file](#file), but there are several p
 ## Command Line Arguments
 
 - `--batch-size N`: Process `N` files in parallel. Setting this value to the number of logical CPU cores will maximize performance at the cost of higher memory use
-- `--write-pin`: Write percolator/mokapot compatible output files
+- `--write-pin`: Write percolator/mokapot compatible output file **in addition** to any other output files
 - `--parquet`: Write parquet-formatted files **instead** of tab-separated files. Do not use this if you need to open your results in Excel.
 - `--fasta path`: Override or set path to FASTA database
 - `--output_directory`: Override or set path to output directory or S3 location
@@ -43,7 +43,7 @@ Options:
           Print version information
 ```
 
-## Environment Variables
+## Environment Variables [#env]
 
 There are two shell environment variables that can be used to change behavior of Sage:
 
@@ -66,8 +66,14 @@ SAGE_LOG=trace RAYON_NUM_THREADS=2 sage config.json
 Sage uses a json file for configuration. This enables easy programmatic manipulation of the configuration file. The order of options in the configuration file does not matter.
 
 A full example is shown below, but it's worth noting that many of the configuration options can be omitted the first time you run Sage. 
+
 One of the nice features of Sage is that it will write out a `results.json` file listing all parameters that were actually used during the run (i.e. any defaults that you did not specify),
-which you can then modify.
+which you can then modify. An even nicer feature is that you can reproduce your results by running the `results.json` file!
+
+```bash copy
+# Reproduce the same results!
+sage results.json
+```
 
 
 ⬅️ Please checkout the rest of the docs for detailed descriptions of the parameters

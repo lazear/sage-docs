@@ -1,8 +1,8 @@
 ---
-title: Spectral processing
+title: Spectral Processing
 ---
 
-# Spectral processing
+# Spectral Processing
 
 - `min_peaks`: Integer. Only process MS2 spectra with at least N peaks (default: 15).
 - `max_peaks`: Integer. Take the top N most intense MS2 peaks to search (default: 150).
@@ -17,8 +17,10 @@ This can speed up searches on high-res MS/MS data.
 `max_fragment_charge`, by default, will search each fragment several times against the fragment index with different charge states (up to `precursor_charge - 1`) to try and find candidate peptides - at the cost of increased run time. 
 If `deisotope` is turned off, it is recommended to set `max_fragment_charge = 1`.
 
+`min_matched_peaks` should be tuned per-dataset, and should be increased if chimeric searching is enabled
+
 **Recommended settings for high-res MS/MS**
-```json filename="high res MS/MS" copy
+```json filename="high res MS/MS" {2, 6} copy
 {
     "deisotope": true,
     "min_peaks": 15,
@@ -29,7 +31,7 @@ If `deisotope` is turned off, it is recommended to set `max_fragment_charge = 1`
 ```
 
 **Recommended settings for low-res MS/MS**
-```json filename="low res MS/MS" copy
+```json filename="low res MS/MS" {2, 6} copy
 {
     "deisotope": false,
     "min_peaks": 15,

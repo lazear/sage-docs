@@ -1,0 +1,118 @@
+---
+title: How Sage Works
+---
+
+import { Steps, Callout, FileTree } from 'nextra/components'
+
+# How Sage Works
+
+Sage is somewhat of a rejection of the UNIX/traditional bioinformatics philosophy of "write programs that do one thing and do it well". (Or, perhaps it
+is an expansion of this concept... where "one thing" means "the whole analysis")
+
+While this philosophy works very well for most pipelines, it is at odds with developing high-performance, end-to-end-testable software - 
+different tools frequently have their own (often-poorly-designed) file formats, requiring time spent serializing and deserializing data into 
+exotic shapes, and wasted CPU cycles on disk IO operations.
+
+Sage, instead, reads data from storage once and keeps all data in main-memory until it has finished running. The different modules within Sage
+(searching, quantification, retention time alignment, peptide-spectrum-match rescoring) all share a unified in-memory database. This eliminates the need
+to write intermediate result files, and when paired with the ability to directly stream data from cloud-storage, completely eliminates the need to use a local disk.
+
+Reduction of storage IO and elimination of intermediate results unlocks substantial performance gains. Further performance comes from leveraging Rust's memory model,
+and the excellent Rayon library for work-stealing parallelization. Sage is designed such that every operation that can be parallelized is parallelized: reading multiple files in parallel, searching, quantification,
+rescoring, and statistical control.
+
+
+A fragment indexing strategy, as popularized by MSFragger, facilitates fast searches with narrow or wide precursor tolerance.
+
+## Overview of Key Steps and Algorithms
+
+<Callout type="info">
+One important thing to note about Sage is that any files that are searched together will undergo global RT-alignment and global FDR control.
+
+Thus, you should only search files together if it makes sense for them to undergo RT-alignment and FDR control together.
+</Callout>
+
+<Steps>
+
+### Generate Fragment Index
+Every potential fragment ion from all peptides in the FASTA database is generated and stored in an internal "fragment index". This data structure 
+enables fast lookups ("what peptides could produce this observed MS2 ion?") with arbitrary precision
+
+### Load Files
+Sage will load many mzML files in parallel - gzipped mzMLs are also supported out-of-the-box. Spectra from these files will undergo spectral preprocessing in parallel
+(selection of `N` most intense peaks, deisotoping)
+
+### Search Files
+Sage searches spectra in parallel. For each MS2 spectrum, Sage finds the list of candidate peptides that have the most experimental-theoretical matches.
+
+```python
+# Psuedo-code
+def score_spectrum(spectrum, n):
+  scoring_table = {}
+  for ion in spectrum:
+    for peptide in fragment_index.query(ion, tolerances):
+      scoring_table[peptide] += 1
+  return n_best(scoring_table, n)
+```
+
+Each of these candidate peptides then undergoes "full" scoring: calculation of `hyperscore`, `delta_hyperscore`, `longest_y_series`, etc. The candidate peptide(s)
+with the highest `hyperscore` will be reported. These scores are used to train a machine learning model that will discriminate between target and decoy matches.
+
+### Retention Time Alignment & Prediction
+After all files have been searched, Sage globally aligns their retention times by matching confident PSMs across files. Post-alignment, a linear model is trained to 
+predict retention times based on peptide sequence. The difference between predicted and observed RT is used as an additional feature for machine learning
+
+### Machine Learning for PSM rescoring
+Sage uses linear discriminant analysis for rescoring peptide-spectrum matches. This algorithm learns the linear combination of a set of features (PSM rank, hyperscore, RT difference vs predicted, etc) that best discriminates 
+between target and decoy matches. The linear combination is used to produce a single "discriminant score" for each peptide-spectrum match.
+
+To support open-searches, Sage builds a model that predicts the likelihood of a given delta mass shift belonging to a decoy hit. This is used as an additional feature for linear discriminant analysis.
+
+
+### Non-parametric modeling of posterior errors
+Kernel-density estimation is used to model the distribution of target and decoy discriminant scores. Posterior error probabilities
+for PSMs, peptides, and protein groups are then calculated from the model, which are used to calculate q-values and control the false discovery rate.
+Picked-peptide and picked-protein approaches are used to maximize discoveries in large searches.
+
+Additionally, Sage calculates a conservative version of FDR: `q_value = (1 + n_decoys) / n_targets{:python}`
+
+### Quantification
+
+#### TMT-based
+Sage will quantify and report all reporter ion intensities, regardless of the FDR of the matched peptide assignment. TMT reporter ion intensities are 1:1 with those
+reported by ProteomeDiscoverer - Sage can also report signal/noise measurements. [More information on configuring TMT searches](/configuration/quantification)
+
+#### Label-free
+Sage includes a wicked-fast and accurate label-free quantification module that uses direct ion current extraction (*a la* FlashLFQ, IonStar) to quantify peptides.
+Only confidently-identified peptides will be quantified.
+
+<Steps>
+### Tracing
+For each peptide quantified, Sage generates a decoy peptide to control the false-MS1-integration-rate. Both the target and decoy peptides are added to an indexed data structure, analogous to the 
+fragment index.
+
+For each MS1 spectrum in the dataset, MS1 ion intensities are assigned to all potential peptides (target & decoy) within a fixed-size mass and retention time tolerance, considering all charge
+states and isotopologues.
+
+### Integration
+MS1 intensities assigned to each peptide are arranged on a Cartesian grid (think, heatmap) indexed by retention time, isotopologue, and file. Peptide-specific time warping is then performed to align MS1 traces across files, maximizing overlapping signals.
+
+Each grid is then scored according to normalized spectral angle, intensity, and retention time delta from the most-confident RT for that peptide.
+</Steps>
+
+### Output 
+
+By default, Sage will write several files to the `output_directory` configuration option (or, the current directory if not set).
+
+Check out the [results](/results) documentation when you're ready to interpret!
+
+<FileTree>
+  <FileTree.Folder name="output_directory" defaultOpen>
+    <FileTree.File name="results.json" />
+    <FileTree.File name="results.sage.tsv" />
+    <FileTree.File name="tmt.tsv" />
+    <FileTree.File name="lfq.tsv" />
+  </FileTree.Folder>
+</FileTree>
+
+</Steps>

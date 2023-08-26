@@ -1,8 +1,7 @@
 {
   "index": "Introduction",
   "started": "Getting Started with Sage",
-  "installation": "Installation",
-  "another": "Another Page",
+  "how_it_works": "How Sage Works",
   "configuration": "Configuring Sage",
   "about": {
     "title": "About",

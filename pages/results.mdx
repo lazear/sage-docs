@@ -1,0 +1,131 @@
+---
+title: Interpreting Sage Results
+---
+
+# Interpreting Sage Results
+
+Sage results are primarily meant to be analyzed using standard programming/data-science tools ([Pandas](https://pandas.pydata.org/), 
+[Polars](https://www.pola.rs/), 
+[data.table](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html), 
+[Rstudio](https://posit.co/products/open-source/rstudio/), etc), and I **highly** encourage you to learn enough of one
+of these tools to filter, merge, pivot, and groupby. It is a truly invaluable skill to have for anyone who needs to analyze proteomics datasets (or data in general!). That being said, TSV files are provided
+such that end-users can perform some filtering and analyzes in Excel.
+
+```python filename="with_polars.py" copy
+import polars as pl
+# Sum TMT intensitities for all confident matches
+df = (
+    pl.read_csv("results.sage.tsv", separator="\t")
+    .filter((pl.col("peptide_q") <= 0.01) & (pl.col("protein_q") <= 0.01) & (pl.col("label") == 1))
+    .join(pl.read_csv("tmt.tsv", separator='\t'), on=["filename", "scannr"])
+    .groupby(["filename", "peptide", "proteins"]).agg(pl.col("tmt*").sum())
+)
+```
+
+import { FileTree, Callout } from 'nextra/components'
+ 
+## Tab-Separated Format
+
+By default, Sage will write several files to the `output_directory` configuration option (or, the current directory if not set):
+
+<FileTree>
+  <FileTree.Folder name="output_directory" defaultOpen>
+    <FileTree.File name="results.json" />
+    <FileTree.File name="results.sage.tsv" />
+    <FileTree.File name="results.sage.pin" />
+    <FileTree.File name="tmt.tsv" />
+    <FileTree.File name="lfq.tsv" />
+  </FileTree.Folder>
+</FileTree>
+
+- `results.json` contains a record of the search parameters and files used for the analysis. It is possible reproduce the analysis from this file:
+```bash filename="reproduce" copy 
+sage results.json
+```
+- `results.sage.tsv` contains all PSMs (including decoys and non-confident matches) identified in the analysis.
+- `results.sage.pin` is a percolator/Mokapot compatible file, produced if `--write-pin` is passed as a command-line argument.
+- `tmt.tsv` contains all reporter ions quantified
+- `lfq.tsv` contains MS1 intensities for each peptide quantified
+
+## Parquet File Format
+Parquet is a file format for data analysis and distributed queries. Parquet files are natively compressed, and yield smaller file sizes and faster query times than TSV files.
+Parquet files can be directly read by Pandas, Polars, and more!
+
+Sage will write parquet files **instead** of tsv files if you pass `--parquet` as a command-line argument.
+
+<Callout type="warning">
+Serializing results to parquet files is still experimental, and the column names are liable to change!
+
+Notable differences from the standard output are that TMT reporter ion intensities are pre-merged onto
+search results, and can be found in the `reporter_ion_intensity` column. The other columns are largely the same as the TSV format
+</Callout>
+
+<FileTree>
+  <FileTree.Folder name="output_directory" defaultOpen>
+    <FileTree.File name="results.json" />
+    <FileTree.File name="results.sage.parquet" />
+    <FileTree.File name="lfq.parquet" />
+  </FileTree.Folder>
+</FileTree>
+
+### Results schema
+
+```thrift filename="results.sage.parquet" copy
+message schema {
+    required byte_array filename (utf8);
+    required byte_array scannr (utf8);
+    required byte_array peptide (utf8);
+    required byte_array stripped_peptide (utf8);
+    required byte_array proteins (utf8);
+    required int32 num_proteins;
+    required int32 rank;
+    required boolean is_decoy;
+    required float expmass;
+    required float calcmass;
+    required int32 charge;
+    required int32 peptide_len;
+    required int32 missed_cleavages;
+    required float isotope_error;
+    required float precursor_ppm;
+    required float fragment_ppm;
+    required float hyperscore;
+    required float delta_next;
+    required float delta_best;
+    required float rt;
+    required float aligned_rt;
+    required float predicted_rt;
+    required float delta_rt_model;
+    required int32 matched_peaks;
+    required int32 longest_b;
+    required int32 longest_y;
+    required float longest_y_pct;
+    required float matched_intensity_pct;
+    required int32 scored_candidates;
+    required float poisson;
+    required float sage_discriminant_score;
+    required float posterior_error;
+    required float spectrum_q;
+    required float peptide_q;
+    required float protein_q;
+    optional group reporter_ion_intensity (LIST) {
+        repeated group list {
+            optional float element;
+        }
+    }
+}
+```
+
+### LFQ Schema
+Notably, the lfq output in parquet format is in long-form 
+
+```thrift filename="lfq.parquet"
+message schema {
+    required byte_array peptide (utf8);
+    required byte_array stripped_peptide (utf8);
+    required byte_array proteins (utf8);
+    required boolean is_decoy;
+    required float q_value;
+    required byte_array filename (utf8);
+    required float intensity;
+}
+```

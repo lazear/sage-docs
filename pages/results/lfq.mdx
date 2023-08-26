@@ -1,0 +1,17 @@
+---
+title: Label-free Quantification
+---
+
+# Label-free Quantification Results
+
+The `lfq.tsv` file produced by Sage has the following columns - note that there will be 1 column per file analyzed (wide-format):
+
+| Header | Description |
+| ------ | ----------- |
+| `peptide` | Peptide sequence, in ProForma format |
+| `proteins` | Semicolon-delimited list of proteins matching the peptide sequence. |
+| `q_value` | MS1-integration specific q-value |
+| `score` | Score used for q-value calculation |
+| `spectral_angle` | Normalized spectral contrast angle between experimental and theoretical isotopic envelope for this peptide |
+| `filename_1` | MS1 intensity for `peptide` in this file |
+| `filename_N` | MS1 intensity for `peptide` in this file |
