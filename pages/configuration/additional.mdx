@@ -1,0 +1,50 @@
+---
+title: Chimeric search, RT prediction, misc.
+---
+
+# Additional Settings 
+
+## Chimeric search and reporting multiple PSMs
+
+Sage is capable of searching for chimeric/co-fragmenting PSMs in any search configuration. This feature requires that `report_psms > 1` to have any special effect.
+During the search phase, Sage will find the best candidate peptide for a spectrum (highest hyperscore), and then subtract the most intense MS2 peak matching each 
+fragment ion from that peptide. Sage will then search the subtracted spectrum again, and repeat the above step until `report_psms` candidates have been found for the
+spectrum, or there are fewer than `min_peaks` MS2 peaks remaining in the spectra.
+
+- `chimera`: Boolean. Search for chimeric/co-fragmenting PSMs (default: false).
+- `report_psms`: Integer. The number of PSMs to report for each spectrum. Higher values might disrupt re-scoring, it is best to search with multiple values (default: 1).
+
+## Retention Time Prediction
+
+import { Callout } from 'nextra/components'
+
+<Callout>
+You probably don't want to turn this off without good reason!
+
+Sage's LFQ module **requires** that global RT alignment and prediction is performed, and will turn on this feature even if you turn it off. 
+</Callout>
+
+By default, Sage will align retention times across all files in the search by matching RTs for the most confident PSMs shared between runs.
+
+> Global retention time alignment is performed using a modified algorithm based on [Chen AT, et al.](https://pubmed.ncbi.nlm.nih.gov/31260443/)
+
+1. Transform all RTs into unit-less percentages (0.0 - 1.0)
+2. Assume that the expected RT for a peptide can be estimated from the average
+RT across all runs
+3. For each run, calculate a linear regression between the observed peptide RTs
+and the global average. Transform all PSM retention times by the regression
+parameters
+4.  Following global RT alignment, Sage will then build a RT prediction model, and integrate this information as a feature for PSM rescoring. 
+
+> See [Klammer et al.](https://doi.org/10.1021/ac070262k)
+
+If, for some reason, you would prefer the above to be turned off, you can do via the `predict_rt` flag. 
+
+```json copy
+{
+    // Oh no!
+    "predict_rt": false
+}
+```
+
+

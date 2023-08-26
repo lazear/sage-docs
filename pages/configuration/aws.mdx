@@ -1,0 +1,17 @@
+---
+title: Interfacing with AWS S3
+---
+
+# Interfacing with AWS S3 
+
+import { Callout } from 'nextra/components'
+
+<Callout type="info">
+Using S3 may incur data transfer charges as well as multi-part upload request charges.
+</Callout>
+
+Sage is capable of natively reading & writing files located on AWS S3 (or S3-compatible systems, such as minio).
+
+- S3 paths should be specified as `s3://bucket/prefix/key.mzML.gz` or `s3://bucket/prefix` for output folder. This can be used for any path passed to Sage (configuration file, FASTA location, etc)
+
+- See [AWS docs](https://docs.aws.amazon.com/sdk-for-rust/latest/dg/credentials.html) for configuring your credentials

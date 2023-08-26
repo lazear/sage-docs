@@ -1,0 +1,45 @@
+---
+title: Getting Started
+---
+
+import { Steps } from 'nextra/components'
+
+# Getting Started
+ 
+<Steps>
+### Convert your files to mzML
+ 
+Sage aims for full compatibility with the mzML specification, and has been extensively tested on files from the following two conversion tools:
+
+1. [msConvert](https://proteowizard.sourceforge.io/download.html)
+- Enable peak-picking/centroiding for MS1 spectra 
+- Do not use numpress
+
+2. [ThermoRawFileParser](https://github.com/compomics/ThermoRawFileParser)
+- Sage can be used to calculate TMT S/N measurements if ThermoRawFileParser is configured to write noise values into the mzML
+
+Sage can directly read gzipped-mzMLs, as well as mzMLs with internal zlib compression of m/z and intensity values. I generally recommend writing 32-bit, compressed values to mzMLs.
+ 
+### Download or install the latest version of Sage
+ 
+Check out the [installation page](/installation)! 
+
+There are several easy ways to download Sage - you don't need to install any additional software, packages, or runtimes to use it.
+
+### Run Sage
+
+Please see the [configuration section](/configuration) for details!
+
+```bash 
+# Everything can be configured from a single file
+sage experiment_242.json
+
+# Or you can set some arguments from the command line!
+sage base_config.json -f human.fasta --write-pin *.mzML
+```
+
+### Interpret results
+
+Please see the [results section](/results) for details!
+
+</Steps>

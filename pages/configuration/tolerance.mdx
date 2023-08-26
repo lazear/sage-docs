@@ -1,0 +1,100 @@
+---
+title: Search Tolerances
+---
+
+# Search Tolerances
+
+Several parameters can impact precursor and fragment tolerances during the database search phase.
+
+
+```json copy
+{
+    "precursor_tol": {
+        "da": [
+            -500,
+            100
+        ]
+    },
+    "fragment_tol": {
+        "ppm": [
+            -10,
+            10
+        ]
+    },
+    "isotope_errors": [0, 3],
+    "wide_window": false
+}
+```
+
+## Precursor Tolerance
+
+This parameters specifices whether an absolute (`"da"`) or relative (`"ppm"`) tolerance is used for selecting candidate matches. 
+Sage applies the "left" side of the tolerance to the experimental mass - this means that typical open-searches (i.e looking for a positive delta mass arising from a chemical modification)
+will want to use a large negative value here. Using the above configuration, an MS2 spectrum with a 2700 Da precursor mass would search for candidate peptides with a mass between 2200 and 2800 Da.
+
+A standard "closed search" might use the following configuration:
+
+```json filename="closed search" copy
+{
+    "precursor_tol": { "ppm": [-20, 20] }
+}
+```
+
+## Fragment Tolerance
+
+Similar to above, you can select whether to use absolute or relative tolerances:
+
+**For high-res MS/MS:**
+```json filename="High res MS/MS" copy
+{
+    "fragment_tol": { "ppm": [-10, 10] }
+}
+```
+
+**Or for low-res MS/MS:**
+```json filename="Low res MS/MS" copy
+{
+    "fragment_tol": { "da": [-0.4, 0.4] }
+}
+```
+
+## Isotope Errors
+
+This parameter essentially runs a multi-notch or mass offset search for each integer value in the (`left` .. `right`) range by multipyling the integer value by the mass difference of one C13 neutron.
+This can account for incorrect assignment or sequening of the monoisotopic peak.
+
+**Default value**:
+```json copy
+{
+    "isotope_errors": [0, 0]
+}
+```
+
+**Typical values**:
+```json copy
+{
+    "isotope_errors": [0, 3]
+}
+```
+
+
+## Wide-window mode
+
+import { Callout } from 'nextra/components'
+
+<Callout>
+Setting `wide_window` will **override** `precursor_tol`!
+</Callout>
+
+This parameter instructs Sage to dynamically change the precursor tolerance for each spectra based on the isolation window encoded in the mzML file.
+This is useful for searching wide-window acquisition (WWA) data, parallel-reaction monitoring (PRM), or data-independent acquisition (DIA) data.
+You probably also want to update the following settings as well if you are running a WWA/PRM/DIA search:
+
+```json copy
+{
+    "wide_window": true,
+    "chimera": true,
+    // Try running multiple searches with different `report_psms` values
+    "report_psms": 5
+}
+```

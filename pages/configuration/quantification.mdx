@@ -1,0 +1,43 @@
+
+
+# Quantification
+import { Callout } from 'nextra/components'
+
+<Callout>
+The quant section is optional and needs to be specified only if TMT or LFQ is used.
+</Callout>
+
+Sage can perform fast and accurate label-free and isobaric (i.e. TMT) quantification. The following settings can be used to configure quantification:
+
+- `tmt`: String. One of "Tmt6", "Tmt10", "Tmt11", "Tmt16", or "Tmt18" (default: null).
+- `tmt_settings`: Object containing TMT-specific settings.
+  - `level`: Integer. The MS-level to perform TMT quantification on (default: 3).
+  - `sn`: Boolean. Use Signal/Noise instead of intensity for TMT quantification. Requires noise values in mzML (default: false).
+- `lfq`: Boolean. Perform label-free quantification (default: null).
+- `lfq_settings`: Object containing LFQ-specific settings.
+  - `peak_scoring`: String. The method used for scoring peaks in LFQ, one of: "Hybrid", "RetentionTime", "SpectralAngle" (default: "Hybrid").
+    > `Hybrid` scoring combines RT-based and spectral-angle based scoring to identify the best MS1 peak to quantify.    
+
+  - `integration`: String. The method used for integrating peak intensities, either "Sum" or "Max" (default: "Sum").
+  - `spectral_angle`: Float. Threshold for the normalized spectral angle similarity measure (observed vs theoretical isotopic envelope), ranging from 0 to 1 (default: 0.7).
+  - `ppm_tolerance`: Float. Tolerance for matching MS1 ions in parts per million (default: 5.0).
+
+Example: 
+```json copy
+{
+ "quant": {
+    "tmt": "Tmt16",
+    "tmt_settings": {
+      "level": 3,
+      "sn": false
+    },
+    "lfq": true,
+    "lfq_settings": {
+      "peak_scoring": "Hybrid",
+      "integration": "Sum",
+      "spectral_angle": 0.7,
+      "ppm_tolerance": 5.0
+    }
+  }
+}
+```

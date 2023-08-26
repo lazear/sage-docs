@@ -1,10 +1,38 @@
+
 # Introduction
  
-Welcome to Nextra! This is a basic docs template. You can use it as a starting point for your own project :)
+Sage is, at it's core, a proteomics database search engine - 
+    a tool that transforms raw mass spectra from proteomics experiments into peptide identificatons 
+    via database searching & spectral matching. 
 
-## What is Nextra?
+However, Sage includes a variety of advanced features that make it a one-stop shop: retention time prediction, quantification (both isobaric & LFQ), peptide-spectrum match rescoring, and FDR control. You can directly use results from Sage without needing to use other tools for these tasks.
 
-A **simple**, **powerful** and **flexible** site generation framework with everything you love from Next.js.
+Additionally, Sage was designed with cloud computing in mind - massively parallel processing and the ability to directly stream compressed mass spectrometry data to/from AWS S3 enables unprecedented search speeds with minimal cost. 
+
+But don't worry, Sage also runs just as well reading local files from your Mac/PC/Linux device
+
+## Why use Sage instead of other tools?
+
+Sage is **simple to configure**, **powerful** and **flexible**. 
+It also happens to be well-tested, mind-boggingly fast, open-source (MIT-licensed) and free.
+
+## Features
+
+- Incredible performance out of the box
+- Effortlessly cross-platform (Linux/MacOS/Windows), effortlessly parallel (uses all of your CPU cores)
+- Fragment indexing strategy allows for blazing fast narrow and open searches (> 500 Da precursor tolerance)
+- Isobaric quantification (MS2/MS3-TMT, or custom reporter ions)
+- Label-free quantification: consider all charge states & isotopologues *a la* FlashLFQ
+- Capable of searching for chimeric/co-fragmenting spectra
+- Wide-window (dynamic precursor tolerance) search mode - enables WWA/PRM/DIA searches
+- Retention time prediction models fit to each LC/MS run
+- PSM rescoring using built-in linear discriminant analysis (LDA)
+- PEP calculation using a non-parametric model (KDE)
+- FDR calculation using target-decoy competition and picked-peptide & picked-protein approaches
+- Percolator/Mokapot [compatible output](/configuration/output)
+- Configuration by [JSON file](/configuration/example)
+- Built-in support for reading gzipped-mzML files
+- Support for reading/writing directly from [AWS S3](/configuration/aws)
 
 ## Documentation
 

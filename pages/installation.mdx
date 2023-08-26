@@ -1,0 +1,58 @@
+
+# Installation
+
+Sage is specifically designed to be easy to install and run. There are several ways to get started:
+
+1. Download the latest binary release (recommended)
+2. Compile from source code
+3. Install via bioconda
+4. Run via Docker
+
+## Download the latest binary release
+
+This is the easiest way to run Sage - Sage uses a continuous integration/deployment system to automatically compile binaries and publically distribute them as [Github Releases](https://github.com/lazear/sage/releases).
+
+Visit this link and download the file corresponding to your operating system and CPU architecture.
+
+Most users will probably want one of the following:
+
+| Configuration | Binary |
+| ------------- | ------ |
+| Mac, Apple Silicon | `aarch64-apple-darwin` |
+| Mac, Intel | `x86_64-apple-darwin` |
+| Windows | `x86_64-pc-windows-msvc` |
+| Linux | `x86_64-unknown-linux-gnu` |
+
+Additional binary builds are supplied for other, less-common configurations
+
+
+## Compile from source code
+
+ - Install the [Rust programming language compiler](https://rustup.rs/) toolchain
+
+Once you have Rust installed, you can copy and paste the following lines of code into your terminal (assuming you have git installed!)
+```bash copy
+git clone https://github.com/lazear/sage.git
+cd sage
+cargo run --release tests/config.json
+```
+
+## Install via bioconda
+
+Sage can be installed from [bioconda](https://anaconda.org/bioconda/sage-proteomics):
+
+```bash copy
+conda install -c bioconda -c conda-forge sage-proteomics
+sage --help
+```
+
+## Run via Docker
+
+```shell
+docker pull ghcr.io/lazear/sage:master
+docker run -it --rm -v ${PWD}:/data ghcr.io/lazear/sage:master /app/sage -o /data /data/config.json
+```
+
+> `-v ${PWD}:/data` means it will mount your current directory as `/data`
+> in the docker image. Make sure all the paths in your command and configuration
+> use the location in the image and not your local directory

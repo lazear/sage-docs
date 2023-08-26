@@ -22,3 +22,17 @@ function MyButton() {
 export default function MyApp() {
   return <MyButton />
 }
+
+export const ReverseMe = () => {
+  const [sequence, setSequence] = useState("PEPTIDEK");
+  function rev() {
+    let mid = sequence.slice(1, sequence.length - 2).split("").reverse().concat();
+    setSequence(sequence[0] + mid + sequence[sequence.length - 1])
+  }
+  return (
+    <div>
+      <span>{sequence}</span>
+      <button onClick={rev}>Reverse</button>
+    </div>
+  );
+};

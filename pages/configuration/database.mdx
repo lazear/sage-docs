@@ -1,0 +1,183 @@
+---
+title: Database
+---
+
+import { Callout } from 'nextra/components'
+
+# Configuring Database Searching
+
+The database section of the configuration file determines how the fragment index is generated.
+
+```json copy
+{
+    "bucket_size": 8192,
+    "enzyme": {
+        "missed_cleavages": 2,
+        "min_len": 7,
+        "max_len": 50,
+        "cleave_at": "KR",
+        "restrict": "P"
+    },
+    "fragment_min_mz": 150.0,
+    "fragment_max_mz": 1500.0,
+    "peptide_min_mass": 500.0,
+    "peptide_max_mass": 5000.0,
+    "ion_kinds": [
+        "b",
+        "y"
+    ],
+    "min_ion_index": 2,
+    "max_variable_mods": 2,
+    "static_mods": {
+        "C": 57.0214
+    },
+    "variable_mods": {
+        "M": 15.9949
+    },
+    "decoy_tag": "rev_",
+    "generate_decoys": true,
+    "fasta": "s3://sage-benchmarking/fasta/human_contam.fasta"
+}
+```
+
+## Bucket size
+
+<Callout type="info">
+This parameter **only** affects search speed and will not change your results.
+
+| MS2 resolution | Suggested Setting |
+| -------------- | ----------------- |
+| Low | 65536 |
+| High | 8192 |
+</Callout>
+
+This parameter can be used to tune performance of Sage. This value sets the number of fragment ions within each "bucket" in the internal index datastructure.
+This value will always be set to the next largest power of 2.
+
+A smaller number (`8192` is the minimum) is suitable for high resolution MS/MS spectra, since not many buckets will need to be searched. Low resolution MS/MS spectra
+will need to search more buckets, so increasing the size of the bucket will lower the total number of internal buckets.
+A good starting point is to use `65536` for ion-trap data, but the optimal value for your search parameters and files might require empirical tuning.
+
+## Enzyme
+The enzyme section contains parameters related to the enzyme used for digestion. The default enzyme is trypsin, with the parameters specified below.
+
+- `missed_cleavages`: Integer. The number of missed cleavages for tryptic digest (default: 1).
+- `min_len`: Integer. The minimum amino acid (AA) length of peptides to search (default: 5).
+- `max_len`: Integer. The maximum AA length of peptides to search (default: 50).
+- `cleave_at`: String. Amino acids to cleave at (default: 'KR').
+
+    >The `cleave_at` parameter can also be used to specify alternative digestion schemes:
+
+    - Non-enzymatic: `cleave_at = ""` - All potential peptides between `min_len` and `max_len` will be generated from the sequence
+    - No digestion: `cleave_at = "$"` - FASTA entries will be used as-is, subject to `min_len` and `max_len` options
+
+- `restrict`: Single character string. Do not cleave if this amino acid follows the cleavage site (default: 'P').
+- `c_terminal`: Boolean. Cleave at the C-terminus of matching amino acids (default:true).
+
+{/* | Setting Name      | Type                  | Description                                                                             | Default Value |
+|-------------------|-----------------------|-----------------------------------------------------------------------------------------|---------------|
+| `missed_cleavages` | Integer               | The number of missed cleavages for tryptic digest                                       | 1             |
+| `min_len`          | Integer               | The minimum amino acid (AA) length of peptides to search                                | 5             |
+| `max_len`          | Integer               | The maximum AA length of peptides to search                                             | 50            |
+| `cleave_at`        | String                | Amino acids to cleave at                                                                | 'KR'          |
+| `restrict`         | Single character      | Do not cleave if this amino acid follows the cleavage site                              | 'P'           |
+| `c_terminal`       | Boolean               | Cleave at the C-terminus of matching amino acids                                        | true          | */}
+
+
+## Fragment Settings
+
+- `fragment_min_mz`: Float. The minimum mass of fragments to search (default: 150.0).
+- `fragment_max_mz`: Float. The maximum mass of fragments to search (default: 2000.0).
+- `peptide_min_mass`: Float. The minimum monoisotopic mass of peptides to fragment *in silico* (default: 500.0).
+- `peptide_max_mass`: Float. The maximum monoisotopic mass of peptides to fragment *in silico* (default: 5000.0).
+- `ion_kinds`: List of strings. Which fragment ions to produce? Allowed values: "a", "b", "c", "x", "y", "z". (default: ["b", "y"])
+- `min_ion_index`: Integer. Do not generate b1..bN or y1..yN ions for preliminary searching if `min_ion_index = N`. Does not affect full scoring of PSMs (default: 2).
+
+## Modifications
+
+### Static Modifications
+
+- `static_mods` Dictionary with characters as keys and floats as values. Represents static modifications applied to amino acids or termini (default: {}). Static modifications are applied after variable modifications
+
+Example: Apply a static modification of 304.207 to the N-terminus of the peptide and lysine, and 57.0215 to cysteine.
+```json filename="static mods" copy
+{
+    "static_mods": {
+        "^": 304.207,
+        "K": 304.207,
+        "C": 57.0215
+    }
+}
+```
+
+### Variable Modifications
+
+- `max_variable_mods`: Integer. Limit k-combinations of variable modifications (default: 2).
+- `variable_mods`: Dictionary with characters as keys and list of floats (or single floats) as values. Represents variable modifications applied to amino acids or termini (default: {}).
+
+Example: Apply a variable modification of 15.9949 to methionine, 49.2022 to the C-terminus of the peptide, 
+42.0 to the N-terminus of the protein, and 111.0 to the C-terminus of the protein, in addition to pyro-glutamine/pyro-glutamic acid.
+Allow only up to 3 variable modifications in total.
+
+```json filename="variable mods" copy
+{
+    "max_variable_mods": 3,
+    "variable_mods": {
+        "M": [15.9949], 
+        "^Q": [-17.026549],
+        "^E": [-18.010565],
+        "$": [49.2022],
+        "[": 42.0,
+        "]": 111.0
+    }
+}
+```
+
+### Modification Syntax:
+
+- `"^X"`: Modification to be applied to amino acid X if it appears at the N-terminus of a peptide
+- `"$X"`: Modification to be applied to amino acid X if it appears at the C-terminus of a peptide
+- `"[X"`: Modification to be applied to amino acid X if it appears at the N-terminus of a protein
+- `"]X"`: Modification to be applied to amino acid X if it appears at the C-terminus of a protein
+
+## Fasta Database and Decoy Generation
+
+<Callout>
+For best results, let Sage generate decoy sequences.
+</Callout>
+
+- `decoy_tag`: String. The tag used to identify decoy entries in the FASTA database (default: "rev_").
+- `generate_decoys`: Boolean. If true, ignore decoys in the FASTA database matching `decoy_tag`, and generate internally reversed peptides (default: false).
+- `fasta`: String. The path to the FASTA file, either a local path or s3 object URI.
+
+Target-decoy competition is key to controlling the false discovery rate in proteomics experiments.
+Sage can use decoy sequences included in the supplied FASTA file, or it can generate internal sequences (recommended).
+Sage reverses tryptic peptides (not proteins), so that the [picked-peptide](https://pubmed.ncbi.nlm.nih.gov/36166314/) approach to FDR can be used.
+
+import { useState } from 'react'
+
+export const ReverseMe = () => {
+  const [sequence, setSequence] = useState("PEPTIDEK");
+  function rev() {
+    let mid = sequence.slice(1, sequence.length - 1).split("").reverse().join("");
+    console.log(mid);
+    setSequence(sequence[0] + mid + sequence[sequence.length - 1])
+  }
+  return (
+    <div style={{marginTop: "12px"}}>
+      <button onClick={rev} style={{border: "1px solid #ccc", borderRadius: "5px", padding: "2px 6px"}}>{sequence} (Click to reverse) </button>
+    </div>
+  );
+};
+
+<ReverseMe />
+
+If `generate_decoys` is set to true (or unspecified), then decoy sequences in the FASTA database matching `decoy_tag` will be *ignored*, 
+and Sage will internally generate decoys. 
+
+<Callout type="error">
+It is __critical__ that you ensure you use the proper `decoy_tag` if you are using a FASTA database containing decoys
+and have internal decoy generation turned on - otherwise Sage will treat the supplied decoys as hits!
+</Callout>
+
+Internally generated decoys will have protein accessions matching `"{decoy_tag}{accession}"`, e.g. if `decoy_tag` is "rev_" then a protein accession like "rev_sp|P01234|HUMAN" will be listed in the output file.
