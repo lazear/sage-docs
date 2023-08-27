@@ -61,12 +61,12 @@ export const SageCI = () => {
   })
 
   return (
-    <div>
-      <table>
+    <div className="w-full my-4">
+      <table className="table table-auto border-separate border-2 border-slate-200 bordering-spacing-4 p-2 w-full text-left">
         <thead> 
           <tr>
-          <th style={{padding: "4px"}}>PXD</th>
-          <th style={{padding: "4px"}}>PSMS</th>
+          <th>PXD</th>
+          <th>PSMS</th>
           <th>Peptides</th>
           <th>Proteins</th>
           <th>CPU (s)</th>
@@ -79,15 +79,18 @@ export const SageCI = () => {
         <tbody>
           {data.map((row) => (
             <tr>
-              <td style={{padding: "4px"}}>{row.pxd}</td>
-              <td style={{padding: "4px"}}>{row.psms}</td>
-              <td style={{padding: "4px"}}>{row.peptides}</td>
-              <td style={{padding: "4px"}}>{row.proteins}</td>
-              <td style={{padding: "4px"}}>{row.run_time.toFixed(1)}</td>
-              <td style={{padding: "4px"}}>{(row.memory_use / (1024 * 1024)).toFixed(1)}</td>
-              <td style={{padding: "4px"}}>{new Date(row.timestamp).toLocaleDateString()}</td>
-              <td style={{padding: "4px"}}>{row.git_commit.slice(0, 7)}</td>
-              <td style={{padding: "4px"}}>{row.config.version}</td>
+              <td><a href={`https://www.ebi.ac.uk/pride/archive/projects/${row.pxd}`} className="text-orange-600 underline">{row.pxd}</a></td>
+              <td>{row.psms}</td>
+              <td>{row.peptides}</td>
+              <td>{row.proteins}</td>
+              <td>{row.run_time.toFixed(1)}</td>
+              <td>{(row.memory_use / (1024 * 1024)).toFixed(1)}</td>
+              {/* <td>{new Date(row.timestamp).toLocaleDateString()}</td> */}
+              <td>{new Date(row.timestamp).toLocaleString()}</td>
+              {/* <td>{row.timestamp}</td> */}
+              <td><a href={`https://github.com/lazear/sage/commit/${row.git_commit}`}
+                className="text-orange-600 underline">{row.git_commit.slice(0, 7)}</a></td>
+              <td>{row.config.version}</td>
             </tr>
           ))}
         </tbody>
@@ -95,5 +98,4 @@ export const SageCI = () => {
       </table>
     </div>
   )
-
 }

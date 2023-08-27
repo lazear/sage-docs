@@ -4,13 +4,21 @@
     "title": "Sage",
     "display": "hidden",
     "theme": {
-      "layout": "raw",
+      "layout": "full",
       "timestamp": false
     }
   },
   "docs": {
     "title": "Documentation",
     "type": "page"
+  },
+  "ci": {
+    "title": "Continuous Integration Results",
+    "type": "page",
+    "theme": {
+      "layout": "full",
+      "timestamp": false
+    }
   },
   "contact": {
     "title": "Contact ↗",

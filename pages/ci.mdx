@@ -1,0 +1,21 @@
+
+import { SageCI } from '../components/counters'
+
+<div className="container mx-auto">
+# Continuous Integration/Testing
+
+Sage is battle tested - in addition to having searched well over a billion spectra (across 10,000s of files)
+as part of its development, Sage undergoes automated testing on every code change.
+Many of these tests ensure the correctness of key functions and algorithms. 
+In addition to unit testing individuals parts of Sage, end-to-end testing is also performed
+on full sized datasets from PRIDE. This enables monitoring performance and identifiation stability over time.
+
+<span className="font-light">
+Note that run time and memory use are merely representative of a single run on a shared machine.
+Benchmarks are currently
+performed on an ARM aarch64 virtual machine with 8 CPU cores and 16 GB of RAM.
+</span>
+
+<SageCI />
+
+</div>
