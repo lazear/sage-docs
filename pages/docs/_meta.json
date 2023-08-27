@@ -1,0 +1,16 @@
+{
+  "index": "Introduction",
+  "started": "Getting Started with Sage",
+  "how_it_works": "How Sage Works",
+  "configuration": "Configuring Sage",
+  "about": {
+    "title": "About",
+    "type": "page"
+  },
+  "contact": {
+    "title": "Contact ↗",
+    "type": "page",
+    "href": "https://twitter.com/michaellazear",
+    "newWindow": true
+  }
+}

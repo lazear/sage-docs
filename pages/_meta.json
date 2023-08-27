@@ -1,10 +1,15 @@
 {
-  "index": "Introduction",
-  "started": "Getting Started with Sage",
-  "how_it_works": "How Sage Works",
-  "configuration": "Configuring Sage",
-  "about": {
-    "title": "About",
+  "index": {
+    "type": "page",
+    "title": "Sage",
+    "display": "hidden",
+    "theme": {
+      "layout": "raw",
+      "timestamp": false
+    }
+  },
+  "docs": {
+    "title": "Documentation",
     "type": "page"
   },
   "contact": {
