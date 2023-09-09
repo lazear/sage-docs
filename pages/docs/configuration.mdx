@@ -191,6 +191,10 @@ You can check out some example files **without** comments in the sidebar (`Examp
      10
     ]
   },
+  // Optional[Tuple[int, int]] {default=[2, 4]}
+  // If charge states are not annotated in the mzML, or if `wide_window` mode is turned on, then consider
+  // all precursors at z=2, z=3, z=4
+  "precursor_charge": [2, 4],
   // Optional[Tuple[int, int]] {default=[0,0]}: C13 isotopic envelope to consider for precursor
   "isotope_errors": [
     // Consider -1 C13 isotope

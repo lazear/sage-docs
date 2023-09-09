@@ -58,6 +58,17 @@ Similar to above, you can select whether to use absolute or relative tolerances:
 }
 ```
 
+## Precursor Charge Range
+
+If precursor charge states are not annotated in the mzML, or if the `wide_window` setting is turned on, Sage will attempt to search the given precursor m/z at multiple charge states (by default, z=2, z=3, and z=4). This setting can be configured to override this behavior.
+
+**Default value**:
+```json copy 
+{
+  "precursor_charge": [2, 4]
+}
+```
+
 ## Isotope Errors
 
 This parameter essentially runs a multi-notch or mass offset search for each integer value in the (`left` .. `right`) range by multipyling the integer value by the mass difference of one C13 neutron.
