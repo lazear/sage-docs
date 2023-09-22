@@ -58,7 +58,7 @@ export const SageCI = () => {
     axios.get<Data[]>('https://d3m290fwl9qhbc.cloudfront.net/results.json')
       .then((resp) => setData(resp.data))
       .catch((err) => setError(JSON.stringify(err)))
-  })
+  }, [])
 
   return (
     <div className="w-full my-4">
