@@ -15,6 +15,8 @@ Sage is primarily configured via a single [file](#file), but there are several p
 - `--parquet`: Write parquet-formatted files **instead** of tab-separated files. Do not use this if you need to open your results in Excel.
 - `--fasta path`: Override or set path to FASTA database
 - `--output_directory`: Override or set path to output directory or S3 location
+- `--annotate-matches`: Record all experimental-theoretical fragment ion matches for use in generating spectral libraries or rescoring PSMs
+- `--disable-telemetry-i-dont-want-to-improve-sage`: Turn off Sage's basic telemetry (which reports # of CPU cores, memory usage, run time, and size of fragment ion index)
 - `[mzml_paths]`: Override or set mzML files to search
 
 ```shell
@@ -35,8 +37,12 @@ Options:
           Number of files to search in parallel (default = number of CPUs/2)
       --parquet
           Write parquet files instead of tab-separated files
+      --annotate-matches
+          Write matched fragments output file.
       --write-pin
           Write percolator-compatible `.pin` output files
+      --disable-telemetry-i-dont-want-to-improve-sage
+          Disable sending telemetry data
   -h, --help
           Print help information
   -V, --version

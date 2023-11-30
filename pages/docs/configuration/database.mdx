@@ -16,7 +16,9 @@ The database section of the configuration file determines how the internal fragm
         "min_len": 7,
         "max_len": 50,
         "cleave_at": "KR",
-        "restrict": "P"
+        "restrict": "P",
+        "c_terminal": true,
+        "semi_enzymatic": false
     },
     "fragment_min_mz": 150.0,
     "fragment_max_mz": 1500.0,
@@ -73,6 +75,7 @@ The enzyme section contains parameters related to the enzyme used for digestion.
 
 - `restrict`: Single character string. Do not cleave if this amino acid follows the cleavage site (default: 'P').
 - `c_terminal`: Boolean. Cleave at the C-terminus of matching amino acids (default:true).
+- `semi_enzymatic`: Boolean. Perform a semi-enzymatic digest (default:false).
 
 {/* | Setting Name      | Type                  | Description                                                                             | Default Value |
 |-------------------|-----------------------|-----------------------------------------------------------------------------------------|---------------|
