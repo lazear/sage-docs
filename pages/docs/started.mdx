@@ -70,8 +70,8 @@ sage --help
 #### Run via Docker
 
 ```shell
-docker pull ghcr.io/lazear/sage:master
-docker run -it --rm -v ${PWD}:/data ghcr.io/lazear/sage:master /app/sage -o /data /data/config.json
+docker pull ghcr.io/lazear/sage:latest
+docker run -it --rm -v ${PWD}:/data ghcr.io/lazear/sage:latest /app/sage -o /data /data/config.json
 ```
 
 > `-v ${PWD}:/data` will mount your current directory as `/data`
