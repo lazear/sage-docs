@@ -26,14 +26,17 @@ Search results can be found in the `results.sage.tsv` file. The table below desc
 | `hyperscore` | X!Tandem hyperscore for the PSM. |
 | `delta_next` | Difference between the hyperscore of this candidate and the next best candidate. |
 | `delta_bext` | Difference between the hyperscore of the best candidate (rank=1) and this candidate. |
-| `rt` | Retention time. |
+| `rt` | Retention time in minutes. |
 | `aligned_rt` | Globally aligned retention time. |
 | `predicted_rt` | Predicted retention time, if enabled. |
 | `delta_rt_model` | Difference between predicted and observed retention time. |
+| `ion_mobility` | Ion mobility of the precursor, if present in mzML. |
+| `predicted_mobility` | Predicted ion mobility of the precursor, if ion mobility measurements are present in the mzML. |
+| `delta_mobility` | Difference between predicteed and observed ion mobility. |
 | `matched_peaks` | Number of matched theoretical fragment ions. |
 | `longest_b` | Longest b-ion series. |
 | `longest_y` | Longest y-ion series. |
-| `longest_y_pct` | Longest y-ion series, divided by peptide length (as a percentage). |
+| `longest_y_pct` | Longest y-ion series, divided by peptide length (as a fraction). |
 | `matched_intensity_pct` | Fraction of MS2 intensity explained by matched b- and y-ions (as a percentage of total MS2 intensity for this spectrum). |
 | `scored_candidates` | Number of scored candidates for this spectrum. |
 | `poisson` | Probability of matching exactly N peaks across all scored candidates (Pr(x=k)). |
@@ -42,5 +45,4 @@ Search results can be found in the `results.sage.tsv` file. The table below desc
 | `spectrum_q` | Assigned spectrum-level q-value. |
 | `peptide_q` | Assigned peptide-level q-value. |
 | `protein_q` | Assigned protein-level q-value. |
-| `ms1_intensity` | Intensity of the selected MS1 precursor ion (not label-free quant) |
 | `ms2_intensity` | Total intensity of MS2 spectrum. |
