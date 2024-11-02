@@ -20,8 +20,6 @@ The database section of the configuration file determines how the internal fragm
         "c_terminal": true,
         "semi_enzymatic": false
     },
-    "fragment_min_mz": 150.0,
-    "fragment_max_mz": 1500.0,
     "peptide_min_mass": 500.0,
     "peptide_max_mass": 5000.0,
     "ion_kinds": [
@@ -89,8 +87,6 @@ The enzyme section contains parameters related to the enzyme used for digestion.
 
 ## Fragment Settings
 
-- `fragment_min_mz`: Float. The minimum mass of fragments to search (default: 150.0).
-- `fragment_max_mz`: Float. The maximum mass of fragments to search (default: 2000.0).
 - `peptide_min_mass`: Float. The minimum monoisotopic mass of peptides to fragment *in silico* (default: 500.0).
 - `peptide_max_mass`: Float. The maximum monoisotopic mass of peptides to fragment *in silico* (default: 5000.0).
 - `ion_kinds`: List of strings. Which fragment ions to produce? Allowed values: "a", "b", "c", "x", "y", "z". (default: ["b", "y"])
