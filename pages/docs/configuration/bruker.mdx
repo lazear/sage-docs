@@ -1,0 +1,104 @@
+---
+title: Bruker File Processing
+---
+
+# Bruker-Specific processing
+
+Several parameters can change how the bruker data is processed.
+
+
+```json copy
+{
+  "bruker_config": {
+    "ms1": {
+      "mz_ppm": 15.0,
+      "ims_pct": 3.0
+    },
+    "ms2": {
+      "spectrum_processing_params": {
+        "smoothing_window": 1,
+        "centroiding_window": 1,
+        "calibration_tolerance": 0.1,
+        "calibrate": false
+      },
+      "frame_splitting_params": {
+        "Quadrupole": {
+          "UniformMobility": [[0.1, 0.05], null]
+        }
+      },  
+    }
+  }
+}
+```
+
+## MS1
+
+These parameters modify the tolerances to centroid peaks along the mobility
+dimension of a frame.
+
+This parameter is only used if the lfq option is enabled.
+
+```json filename="centroid_config" copy
+{
+  "bruker_config": {
+    "ms1": {
+      "mz_ppm": 15.0,
+      "ims_pct": 3.0
+    }
+}
+```
+
+## MS2 Spectrum Processing Parameters
+
+```json filename="Default Parameters" copy
+{
+  "bruker_config": {
+    "ms2": {
+      "spectrum_processing_params": {
+        "smoothing_window": 1,
+        "centroiding_window": 1,
+        "calibration_tolerance": 0.1,
+        "calibrate": false
+      }
+    }
+  }
+}
+```
+
+## (Experimental) Frame Splitting Parameters
+
+These parameters can be used to search timsDIA data using Sage.
+In essence they describe how the frame should be split to generate
+spectra.
+
+There are two major options that describe what subsets of the frame
+should be considered an unit to split by; The options are `Window`
+and `Quadrupole`. And Three minor options, `null`, `UniformMobility`,
+and `Even`.
+
+1. `null`, No splitting beyond the major group is done.
+2. `UniformMobility`, Splits each region in areas of a specified size,
+   and that overlap by a specific value. For instance [0.1, 0.05]
+   will combine regions of size 0.1 1/k0 and will overlap by 0.05 with
+   each other.
+3. `Even` Will evenly divide the mobility window into `N` number of
+   groups.
+
+
+**Default value**:
+```json copy 
+{
+  "bruker_config": {
+    "ms2": {
+      "frame_splitting_params": {
+        // "Window": { // All internal options are also compatible with `Window`
+        "Quadrupole": {
+          "UniformMobility": [[0.1, 0.05], null]
+          // "Even": 10
+          // null 
+        }
+      }
+    }
+  }
+}
+```
