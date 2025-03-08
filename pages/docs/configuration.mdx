@@ -233,27 +233,29 @@ You can check out some example files **without** comments in the sidebar (`Examp
     "local/path.d" // Sage can also read natively bruker .d files.
   ],
   // Configuration to process Bruker data read from .d
-  "bruker_spectrum_processor": {
-    // Optional configuration to process the frames into spectra.
-    // Used for both DDA and DIA
-    "spectrum_processing_params": {
-      "smoothing_window": 1,
-      "centroiding_window": 1,
-      "calibration_tolerance": 0.1,
-      "calibrate": false
-    },
-    // Optional configuration to split MS2 frames.
-    // Only used if when reading DIA data.
-    "frame_splitting_params": {
-      "Quadrupole": {
-        "UniformMobility": [[0.1, 0.05], null]
+  "bruker_config": {
+    "ms2": {
+      // Optional configuration to process the frames into spectra.
+      // Used for both DDA and DIA
+      "spectrum_processing_params": {
+        "smoothing_window": 1,
+        "centroiding_window": 1,
+        "calibration_tolerance": 0.1,
+        "calibrate": false
+      },
+      // Optional configuration to split MS2 frames.
+      // Only used if when reading DIA data.
+      "frame_splitting_params": {
+        "Quadrupole": {
+          "UniformMobility": [[0.1, 0.05], null]
+        }
       }
     },
-    // Optional configuration to centroid MS1 frames.
-    // Only used if LFQ is enabled AND bruker data is read.
-    "ms1_centroiding": {
-        "mz_ppm": 15.0,
-        "mobility_pct": 3.0
+    "ms1": {
+      // Optional configuration to centroid MS1 frames.
+      // Only used if LFQ is enabled AND bruker data is read.
+      "mz_ppm": 15.0,
+      "mobility_pct": 3.0
     }
   }
 
