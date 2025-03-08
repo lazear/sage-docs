@@ -22,7 +22,8 @@ Sage can perform fast and accurate label-free and isobaric (i.e. TMT) quantifica
       "peak_scoring": "Hybrid",
       "integration": "Sum",
       "spectral_angle": 0.7,
-      "ppm_tolerance": 5.0
+      "ppm_tolerance": 5.0,
+      "mobility_pct_tolerance": 3.0
     }
   }
 }
@@ -45,4 +46,5 @@ If you need to report S/N measurements, [ThermoRawFileParser](https://github.com
   - `integration`: String. The method used for integrating peak intensities, either "Sum" or "Max" (default: "Sum").
   - `spectral_angle`: Float. Threshold for the normalized spectral angle similarity measure (observed vs theoretical isotopic envelope), ranging from 0 to 1 (default: 0.7).
   - `ppm_tolerance`: Float. Tolerance for matching MS1 ions in parts per million (default: 5.0).
+  - `mobility_pct_tolerance`: Float. Tolerance for matching MS1 ions in percent (default: 3.0). Only used for Bruker input.
 
