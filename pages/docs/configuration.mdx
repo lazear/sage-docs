@@ -175,7 +175,12 @@ You can check out some example files **without** comments in the sidebar (`Examp
       // Optional[float] {default = 5.0}, tolerance for DICE window around calculated precursor mass
       "ppm_tolerance": 5.0,
       // Optional[float] {default = 3.0}, tolerance for DICE window around observed precursor mobility
-      "mobility_pct_tolerance": 3.0
+      "mobility_pct_tolerance": 3.0,
+      // Optional[bool] {default = true}. Combine all charge states for quantification. Setting this to false
+      // quantifies each peptide-charge precursor in `precursor_charge` range (see below) separately
+      "combine_charge_states": true,
+      // Optional[float] {default = 0.01}, maximum peptide-level q-value for reporting quantification results
+      "peptide_q_value": 0.01
     }
   },
   // Tolerance can be either "ppm" or "da"

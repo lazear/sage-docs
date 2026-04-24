@@ -23,7 +23,9 @@ Sage can perform fast and accurate label-free and isobaric (i.e. TMT) quantifica
       "integration": "Sum",
       "spectral_angle": 0.7,
       "ppm_tolerance": 5.0,
-      "mobility_pct_tolerance": 3.0
+      "mobility_pct_tolerance": 3.0,
+      "combine_charge_states": true,
+      "peptide_q_value": 0.01
     }
   }
 }
@@ -47,4 +49,5 @@ If you need to report S/N measurements, [ThermoRawFileParser](https://github.com
   - `spectral_angle`: Float. Threshold for the normalized spectral angle similarity measure (observed vs theoretical isotopic envelope), ranging from 0 to 1 (default: 0.7).
   - `ppm_tolerance`: Float. Tolerance for matching MS1 ions in parts per million (default: 5.0).
   - `mobility_pct_tolerance`: Float. Tolerance for matching MS1 ions in percent (default: 3.0). Only used for Bruker input.
-
+  - `combine_charge_states`: Boolean. If true, combine all charge states for quantification. If false, quantify each peptide-charge precursor separately (default: true).
+  - `peptide_q_value`: Float. Maximum peptide-level q-value for reporting quantification results (default: 0.01).
